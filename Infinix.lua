@@ -1,537 +1,559 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>infinix Client | Brookhaven Rp | Português</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #0a0a0a;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-        }
-        
-        .floating-icon {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #1a1a1a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: move;
-            z-index: 10000;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            font-size: 24px;
-            user-select: none;
-        }
-        
-        .menu-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 700px;
-            height: 450px;
-            background-color: #111;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-            display: none;
-            z-index: 10001;
-        }
-        
-        .header {
-            height: 35px;
-            background-color: #090909;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            cursor: move;
-            user-select: none;
-        }
-        
-        .title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #eee;
-        }
-        
-        .window-controls {
-            display: flex;
-        }
-        
-        .window-btn {
-            width: 30px;
-            height: 20px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            color: #fff;
-        }
-        
-        .minimize {
-            background-color: #333;
-        }
-        
-        .close {
-            background-color: #ff5555;
-        }
-        
-        .content {
-            display: flex;
-            height: calc(100% - 35px);
-        }
-        
-        .sidebar {
-            width: 180px;
-            background-color: #131313;
-            padding: 20px 0;
-            height: 100%;
-        }
-        
-        .menu-btn {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            color: #ddd;
-        }
-        
-        .menu-btn.active {
-            background-color: #1a1a1a;
-            border-left: 3px solid #4CAF50;
-        }
-        
-        .menu-btn:hover {
-            background-color: #1a1a1a;
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .section {
-            display: none;
-        }
-        
-        .section.active {
-            display: block;
-        }
-        
-        h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-        
-        p {
-            color: #bbb;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #3e8e41;
-        }
-        
-        .protection-item {
-            margin-bottom: 15px;
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-            margin-right: 10px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #333;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #4CAF50;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        .protection-label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            color: #ddd;
-            font-size: 14px;
-        }
-        
-        .player-list {
-            background-color: #1a1a1a;
-            border-radius: 6px;
-            padding: 10px;
-            margin-top: 10px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .player-item {
-            padding: 8px;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            background-color: #222;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 13px;
-        }
-        
-        .player-item:hover {
-            background-color: #333;
-        }
-        
-        .player-item.selected {
-            background-color: #2d572c;
-        }
-        
-        .update-btn {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 10px;
-        }
-        
-        .update-btn:hover {
-            background-color: #444;
-        }
-        
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444;
-        }
-    </style>
-</head>
-<body>
-    <!-- Ícone flutuante -->
-    <div class="floating-icon" id="floatingIcon">🏠</div>
-    
-    <!-- Container do menu -->
-    <div class="menu-container" id="menuContainer">
-        <div class="header" id="header">
-            <div class="title">infinix Client | Brookhaven Rp | Português</div>
-            <div class="window-controls">
-                <div class="window-btn minimize" id="minimizeBtn">-</div>
-                <div class="window-btn close" id="closeBtn">X</div>
-            </div>
-        </div>
-        
-        <div class="content">
-            <!-- Menu lateral -->
-            <div class="sidebar">
-                <div class="menu-btn active" data-section="home">Início</div>
-                <div class="menu-btn" data-section="protection">Proteção</div>
-                <div class="menu-btn" data-section="troll">Troll</div>
-            </div>
-            
-            <!-- Conteúdo principal -->
-            <div class="main-content">
-                <!-- Seção Início -->
-                <div class="section active" id="home-section">
-                    <h2>infinix Hub | Community</h2>
-                    <p>Junte-se a nossa comunidade discord para comprar um designer</p>
-                    <button class="btn" id="discordBtn">Join</button>
-                </div>
-                
-                <!-- Seção Proteção -->
-                <div class="section" id="protection-section">
-                    <h2>Proteção</h2>
-                    
-                    <div class="protection-item">
-                        <label class="protection-label">
-                            <div class="switch">
-                                <input type="checkbox" id="antVoid">
-                                <span class="slider"></span>
-                            </div>
-                            ANT VOID
-                        </label>
-                    </div>
-                    
-                    <div class="protection-item">
-                        <label class="protection-label">
-                            <div class="switch">
-                                <input type="checkbox" id="antSit">
-                                <span class="slider"></span>
-                            </div>
-                            ANT SIT
-                        </label>
-                    </div>
-                    
-                    <div class="protection-item">
-                        <label class="protection-label">
-                            <div class="switch">
-                                <input type="checkbox" id="antScript">
-                                <span class="slider"></span>
-                            </div>
-                            ANT SCRIPT
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Seção Troll -->
-                <div class="section" id="troll-section">
-                    <h2>TROLL</h2>
-                    
-                    <button class="btn" id="bugServerBtn">Bugar Servidor (Todos Players)</button>
-                    
-                    <div style="margin-top: 20px;">
-                        <h3>BUGAR JOGADOR SELECIONADO</h3>
-                        
-                        <div class="player-list" id="playerList">
-                            <div class="player-item">Jogador 1</div>
-                            <div class="player-item">Jogador 2</div>
-                            <div class="player-item">Jogador 3</div>
-                            <div class="player-item">Jogador 4</div>
-                            <div class="player-item">Jogador 5</div>
-                        </div>
-                        
-                        <button class="update-btn" id="updatePlayersBtn">ATUALIZAR PLAYERS</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+-- infinix Client | Brookhaven Rp | Português
+-- Dev: Dev <thurxis>
+-- NOTA DE SEGURANÇA: Este script NÃO executa ações que prejudiquem outros jogadores ou servidores.
+-- Ações potencialmente disruptivas foram transformadas em simulações locais/avisos.
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos do DOM
-            const floatingIcon = document.getElementById('floatingIcon');
-            const menuContainer = document.getElementById('menuContainer');
-            const minimizeBtn = document.getElementById('minimizeBtn');
-            const closeBtn = document.getElementById('closeBtn');
-            const menuBtns = document.querySelectorAll('.menu-btn');
-            const sections = document.querySelectorAll('.section');
-            const discordBtn = document.getElementById('discordBtn');
-            const bugServerBtn = document.getElementById('bugServerBtn');
-            const updatePlayersBtn = document.getElementById('updatePlayersBtn');
-            const playerItems = document.querySelectorAll('.player-item');
-            const header = document.getElementById('header');
-            
-            // Link do Discord
-            const discordLink = 'https://discord.gg/XT8DFw2QsG';
-            
-            // Mostrar/ocultar menu ao clicar no ícone flutuante
-            floatingIcon.addEventListener('click', function() {
-                menuContainer.style.display = 'block';
-            });
-            
-            // Minimizar menu
-            minimizeBtn.addEventListener('click', function() {
-                menuContainer.style.display = 'none';
-            });
-            
-            // Fechar menu
-            closeBtn.addEventListener('click', function() {
-                menuContainer.style.display = 'none';
-            });
-            
-            // Alternar entre seções do menu
-            menuBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remover classe active de todos os botões
-                    menuBtns.forEach(b => b.classList.remove('active'));
-                    // Adicionar classe active ao botão clicado
-                    this.classList.add('active');
-                    
-                    // Ocultar todas as seções
-                    sections.forEach(section => section.classList.remove('active'));
-                    
-                    // Mostrar a seção correspondente
-                    const sectionId = this.getAttribute('data-section') + '-section';
-                    document.getElementById(sectionId).classList.add('active');
-                });
-            });
-            
-            // Copiar link do Discord
-            discordBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText(discordLink)
-                    .then(() => {
-                        alert('Link do Discord copiado: ' + discordLink);
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = (LocalPlayer and LocalPlayer:FindFirstChildOfClass("PlayerGui")) or game:GetService("StarterGui")
+
+-- Config
+local DISCORD_LINK = "https://discord.gg/XT8DFw2QsG"
+local THEME = {
+    bg = Color3.fromRGB(5,5,5),
+    panel = Color3.fromRGB(12,12,12),
+    accent = Color3.fromRGB(30,144,255),
+    text = Color3.fromRGB(255,255,255),
+    muted = Color3.fromRGB(150,150,150),
+    green = Color3.fromRGB(46,204,113),
+}
+
+-- Small helper to create instances
+local function new(class, props)
+    local obj = Instance.new(class)
+    if props then
+        for k,v in pairs(props) do
+            if type(k) == "number" then
+                v.Parent = obj
+            else
+                pcall(function() obj[k] = v end)
+            end
+        end
+    end
+    return obj
+end
+
+-- Root GUI
+local screenGui = new("ScreenGui", {
+    Name = "infinixClientGUI",
+    ResetOnSpawn = false,
+    Parent = PlayerGui
+})
+
+-- Background
+local mainFrame = new("Frame", {
+    Name = "Main",
+    Parent = screenGui,
+    AnchorPoint = Vector2.new(0.5,0.5),
+    Position = UDim2.new(0.5,0.5,0.5,0),
+    Size = UDim2.new(0.72,0,0.72,0),
+    BackgroundColor3 = THEME.panel,
+    BorderSizePixel = 0,
+})
+new("UICorner", {Parent = mainFrame, CornerRadius = UDim.new(0,12)})
+
+-- TopBar: title + minimize + close
+local topBar = new("Frame", {
+    Parent = mainFrame,
+    Size = UDim2.new(1,0,0,36),
+    BackgroundTransparency = 1,
+})
+local title = new("TextLabel", {
+    Parent = topBar,
+    Text = "infinix Client  |  Brookhaven Rp  |  Português",
+    TextColor3 = THEME.text,
+    BackgroundTransparency = 1,
+    Font = Enum.Font.SourceSansBold,
+    TextSize = 18,
+    Position = UDim2.new(0,12,0,6),
+    Size = UDim2.new(0.75,0,1,0),
+    TextXAlignment = Enum.TextXAlignment.Left,
+})
+local btnMin = new("TextButton", {
+    Parent = topBar,
+    Name = "Minimize",
+    Text = "-",
+    Font = Enum.Font.SourceSansBold,
+    TextSize = 20,
+    BackgroundColor3 = THEME.panel,
+    TextColor3 = THEME.text,
+    Size = UDim2.new(0,36,0,28),
+    Position = UDim2.new(1,-90,0,4),
+})
+new("UICorner", {Parent = btnMin, CornerRadius = UDim.new(0,6)})
+local btnClose = new("TextButton", {
+    Parent = topBar,
+    Name = "Close",
+    Text = "X",
+    Font = Enum.Font.SourceSansBold,
+    TextSize = 18,
+    BackgroundColor3 = THEME.panel,
+    TextColor3 = THEME.text,
+    Size = UDim2.new(0,36,0,28),
+    Position = UDim2.new(1,-44,0,4),
+})
+new("UICorner", {Parent = btnClose, CornerRadius = UDim.new(0,6)})
+
+-- Left menu
+local leftPanel = new("Frame", {
+    Parent = mainFrame,
+    Position = UDim2.new(0,12,0,54),
+    Size = UDim2.new(0,140,1,-70),
+    BackgroundTransparency = 1,
+})
+local function createMenuButton(text, posY)
+    local b = new("TextButton", {
+        Parent = leftPanel,
+        Text = text,
+        Size = UDim2.new(1,0,0,44),
+        Position = UDim2.new(0,0,posY,0),
+        BackgroundColor3 = THEME.panel,
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSans,
+        TextSize = 16,
+    })
+    new("UICorner", {Parent = b, CornerRadius = UDim.new(0,8)})
+    return b
+end
+local btnInfo = createMenuButton("Informações", 0)
+local btnInicio = createMenuButton("Início", 0.125)
+local btnProtecao = createMenuButton("Proteção", 0.25)
+local btnTroll = createMenuButton("Troll", 0.375)
+
+-- Right content area
+local rightArea = new("Frame", {
+    Parent = mainFrame,
+    Position = UDim2.new(0,164,0,54),
+    Size = UDim2.new(1,-176,1,-70),
+    BackgroundColor3 = THEME.bg,
+    BorderSizePixel = 0,
+})
+new("UICorner", {Parent = rightArea, CornerRadius = UDim.new(0,10)})
+
+-- Helper: clear rightArea
+local function clearRight()
+    for _,v in pairs(rightArea:GetChildren()) do
+        v:Destroy()
+    end
+end
+
+-- Content: Início (Discord)
+local function showInicio()
+    clearRight()
+    local header = new("TextLabel", {
+        Parent = rightArea,
+        Text = "infinix Hub | Community",
+        TextColor3 = THEME.text,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 20,
+        Position = UDim2.new(0,12,0,12),
+        Size = UDim2.new(1,-24,0,28),
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+    local sub = new("TextLabel", {
+        Parent = rightArea,
+        Text = "Junte-se a nossa comunidade discord para comprar um designer",
+        TextColor3 = THEME.muted,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSans,
+        TextSize = 15,
+        Position = UDim2.new(0,12,0,46),
+        Size = UDim2.new(1,-24,0,50),
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+    })
+    local joinBtn = new("TextButton", {
+        Parent = rightArea,
+        Text = "Join",
+        BackgroundColor3 = THEME.green,
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 16,
+        Position = UDim2.new(0,12,0,110),
+        Size = UDim2.new(0,120,0,40),
+    })
+    new("UICorner", {Parent = joinBtn, CornerRadius = UDim.new(0,8)})
+
+    joinBtn.MouseButton1Click:Connect(function()
+        -- tenta copiar para o clipboard (dependendo do executor)
+        local ok, err = pcall(function()
+            if setclipboard then
+                setclipboard(DISCORD_LINK)
+            else
+                -- alguns executores suportam StarterGui:SetCore("SendNotification", {...}) mas copiar pode falhar
+                -- fallback: usar StarterGui to show link
+                -- apenas informamos localmente
+            end
+        end)
+        if ok then
+            -- notificação simples
+            pcall(function()
+                if game:GetService("StarterGui") and game:GetService("StarterGui").SetCore then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Discord copiado",
+                        Text = "Link copiado para a área de transferência.",
+                        Duration = 3,
                     })
-                    .catch(err => {
-                        console.error('Erro ao copiar o link: ', err);
-                    });
-            });
-            
-            // Bugar servidor (todos players)
-            bugServerBtn.addEventListener('click', function() {
-                alert('Todos os players estão bugados (pulando sem parar), exceto você!');
-                // Aqui viria o código real para executar a função no jogo
-            });
-            
-            // Atualizar lista de players
-            updatePlayersBtn.addEventListener('click', function() {
-                alert('Lista de players atualizada!');
-                // Aqui viria o código real para atualizar a lista de jogadores
-            });
-            
-            // Selecionar jogador
-            playerItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    playerItems.forEach(i => i.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
-            
-            // Tornar o menu arrastável
-            let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
-            
-            header.addEventListener("mousedown", dragStart);
-            header.addEventListener("mouseup", dragEnd);
-            header.addEventListener("mousemove", drag);
-            
-            floatingIcon.addEventListener("mousedown", dragStartIcon);
-            floatingIcon.addEventListener("mouseup", dragEnd);
-            floatingIcon.addEventListener("mousemove", dragIcon);
-            
-            function dragStart(e) {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-                
-                if (e.target === header) {
-                    isDragging = true;
-                }
-            }
-            
-            function dragStartIcon(e) {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-                
-                if (e.target === floatingIcon) {
-                    isDragging = true;
-                }
-            }
-            
-            function dragEnd() {
-                initialX = currentX;
-                initialY = currentY;
-                
-                isDragging = false;
-            }
-            
-            function drag(e) {
-                if (isDragging) {
-                    e.preventDefault();
-                    
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                    
-                    xOffset = currentX;
-                    yOffset = currentY;
-                    
-                    setTranslate(currentX, currentY, menuContainer);
-                }
-            }
-            
-            function dragIcon(e) {
-                if (isDragging) {
-                    e.preventDefault();
-                    
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                    
-                    xOffset = currentX;
-                    yOffset = currentY;
-                    
-                    setTranslate(currentX, currentY, floatingIcon);
-                }
-            }
-            
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-            }
-        });
-    </script>
-</body>
-</html>
+                end
+            end)
+        else
+            warn("Não foi possível copiar: "..tostring(err))
+        end
+    end)
+end
+
+-- Content: Proteção (toggles locais)
+local protectionStates = {
+    ANT_VOID = false,
+    ANT_SIT = false,
+    ANT_SCRIPT = false,
+}
+local function showProtecao()
+    clearRight()
+    local header = new("TextLabel", {
+        Parent = rightArea,
+        Text = "Proteções",
+        TextColor3 = THEME.text,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 20,
+        Position = UDim2.new(0,12,0,12),
+        Size = UDim2.new(1,-24,0,28),
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+    local function makeToggle(name, posY)
+        local label = new("TextLabel", {
+            Parent = rightArea,
+            Text = name,
+            TextColor3 = THEME.muted,
+            BackgroundTransparency = 1,
+            Font = Enum.Font.SourceSans,
+            TextSize = 15,
+            Position = UDim2.new(0,12,posY,0),
+            Size = UDim2.new(0.6,-12,0,30),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center,
+        })
+        local btn = new("TextButton", {
+            Parent = rightArea,
+            Text = "OFF",
+            BackgroundColor3 = Color3.fromRGB(90,90,90),
+            TextColor3 = THEME.text,
+            Font = Enum.Font.SourceSansBold,
+            TextSize = 14,
+            Position = UDim2.new(0.65,0,posY,0),
+            Size = UDim2.new(0.33,0,0,30),
+        })
+        new("UICorner", {Parent = btn, CornerRadius = UDim.new(0,8)})
+        btn.MouseButton1Click:Connect(function()
+            protectionStates[name] = not protectionStates[name]
+            if protectionStates[name] then
+                btn.BackgroundColor3 = THEME.accent
+                btn.Text = "ON"
+                -- ação segura: apenas aviso local
+                pcall(function()
+                    if game:GetService("StarterGui").SetCore then
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "Proteção",
+                            Text = name.." ativado (simulado localmente).",
+                            Duration = 2,
+                        })
+                    end
+                end)
+            else
+                btn.BackgroundColor3 = Color3.fromRGB(90,90,90)
+                btn.Text = "OFF"
+            end
+        end)
+    end
+
+    makeToggle("ANT_VOID", 0.18)
+    makeToggle("ANT_SIT", 0.32)
+    makeToggle("ANT_SCRIPT", 0.46)
+end
+
+-- Content: Troll (SIMULAÇÕES LOCAIS)
+local function showTroll()
+    clearRight()
+    local header = new("TextLabel", {
+        Parent = rightArea,
+        Text = "TROLL",
+        TextColor3 = THEME.text,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 20,
+        Position = UDim2.new(0,12,0,12),
+        Size = UDim2.new(1,-24,0,28),
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    -- Botão: "Bugar pula servidor (todos player)" -> substituído por SIMULAÇÃO local: só faz seu próprio personagem pular repetidamente
+    local bugAllBtn = new("TextButton", {
+        Parent = rightArea,
+        Text = "Bugar pula servidor (simulação local)",
+        BackgroundColor3 = THEME.accent,
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 14,
+        Position = UDim2.new(0,12,0,60),
+        Size = UDim2.new(0,300,0,40),
+    })
+    new("UICorner", {Parent = bugAllBtn, CornerRadius = UDim.new(0,8)})
+
+    local jumping = false
+    local jumpCoroutine
+    bugAllBtn.MouseButton1Click:Connect(function()
+        jumping = not jumping
+        if jumping then
+            bugAllBtn.BackgroundColor3 = THEME.green
+            bugAllBtn.Text = "Parar simulação de pulo"
+            -- apenas faz o seu personagem pular repetidamente (SIMULAÇÃO)
+            jumpCoroutine = coroutine.create(function()
+                while jumping do
+                    local char = LocalPlayer.Character
+                    if char then
+                        local humanoid = char:FindFirstChildOfClass("Humanoid")
+                        if humanoid and humanoid.Health > 0 then
+                            humanoid.Jump = true
+                        end
+                    end
+                    wait(0.45)
+                end
+            end)
+            coroutine.resume(jumpCoroutine)
+        else
+            bugAllBtn.BackgroundColor3 = THEME.accent
+            bugAllBtn.Text = "Bugar pula servidor (simulação local)"
+        end
+    end)
+
+    -- Seletor de jogador (não executa ações nocivas; apenas mostra uma notificação/simulação)
+    local selLabel = new("TextLabel", {
+        Parent = rightArea,
+        Text = "JOGADOR SELECIONADO",
+        TextColor3 = THEME.muted,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSans,
+        TextSize = 14,
+        Position = UDim2.new(0,12,0,120),
+        Size = UDim2.new(0.6,0,0,20),
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+    local dropdown = new("TextButton", {
+        Parent = rightArea,
+        Text = "Selecione...",
+        BackgroundColor3 = Color3.fromRGB(80,80,80),
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSans,
+        TextSize = 14,
+        Position = UDim2.new(0,12,0,146),
+        Size = UDim2.new(0.5,0,0,34),
+    })
+    new("UICorner", {Parent = dropdown, CornerRadius = UDim.new(0,8)})
+
+    local atualizarBtn = new("TextButton", {
+        Parent = rightArea,
+        Text = "ATUALIZAR PLAYERS",
+        BackgroundColor3 = THEME.accent,
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 13,
+        Position = UDim2.new(0.54,0,0,146),
+        Size = UDim2.new(0.34,0,0,34),
+    })
+    new("UICorner", {Parent = atualizarBtn, CornerRadius = UDim.new(0,8)})
+
+    local listFrame
+    local selectedPlayerName
+
+    local function refreshPlayerList()
+        if listFrame then listFrame:Destroy() end
+        listFrame = new("Frame", {
+            Parent = rightArea,
+            BackgroundColor3 = Color3.fromRGB(20,20,20),
+            Position = UDim2.new(0,12,0,186),
+            Size = UDim2.new(0,0,0,0),
+            BorderSizePixel = 0,
+        })
+        new("UICorner", {Parent = listFrame, CornerRadius = UDim.new(0,8)})
+        local y = 6
+        for _,plr in ipairs(Players:GetPlayers()) do
+            local pbtn = new("TextButton", {
+                Parent = listFrame,
+                Text = plr.Name,
+                BackgroundColor3 = Color3.fromRGB(40,40,40),
+                TextColor3 = THEME.text,
+                Font = Enum.Font.SourceSans,
+                TextSize = 14,
+                Position = UDim2.new(0,6,0,y),
+                Size = UDim2.new(0,240,0,28),
+            })
+            new("UICorner", {Parent = pbtn, CornerRadius = UDim.new(0,6)})
+            pbtn.MouseButton1Click:Connect(function()
+                selectedPlayerName = plr.Name
+                dropdown.Text = selectedPlayerName
+                -- fecha a lista
+                listFrame:Destroy()
+                listFrame = nil
+            end)
+            y = y + 34
+        end
+        -- ajustar tamanho
+        local total = #Players:GetPlayers() * 34 + 12
+        listFrame.Size = UDim2.new(0,260,0,total)
+    end
+
+    atualizarBtn.MouseButton1Click:Connect(function()
+        refreshPlayerList()
+    end)
+
+    dropdown.MouseButton1Click:Connect(function()
+        if listFrame then
+            listFrame:Destroy()
+            listFrame = nil
+        else
+            refreshPlayerList()
+        end
+    end)
+
+    -- Botão "Bugar jogador selecionado" -> SIMULADO: mostra notificação/instrução
+    local bugSelectedBtn = new("TextButton", {
+        Parent = rightArea,
+        Text = "BUGAR JOGADOR SELECIONADO (SIMULAÇÃO)",
+        BackgroundColor3 = Color3.fromRGB(180,70,70),
+        TextColor3 = THEME.text,
+        Font = Enum.Font.SourceSansBold,
+        TextSize = 14,
+        Position = UDim2.new(0,12,0,220),
+        Size = UDim2.new(0,360,0,40),
+    })
+    new("UICorner", {Parent = bugSelectedBtn, CornerRadius = UDim.new(0,8)})
+    bugSelectedBtn.MouseButton1Click:Connect(function()
+        if not selectedPlayerName then
+            pcall(function()
+                if game:GetService("StarterGui").SetCore then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Erro",
+                        Text = "Nenhum jogador selecionado.",
+                        Duration = 2,
+                    })
+                end
+            end)
+            return
+        end
+        -- SIMULAÇÃO: não altera outros jogadores. Apenas notifica o executor.
+        pcall(function()
+            if game:GetService("StarterGui").SetCore then
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Simulação",
+                    Text = "Ação para "..selectedPlayerName.." simulada localmente. Não faz alterações reais.",
+                    Duration = 3,
+                })
+            end
+        end)
+    end)
+end
+
+-- Default open Inicio
+showInicio()
+
+-- Menu button handlers
+btnInicio.MouseButton1Click:Connect(showInicio)
+btnProtecao.MouseButton1Click:Connect(showProtecao)
+btnTroll.MouseButton1Click:Connect(showTroll)
+btnInfo.MouseButton1Click:Connect(function()
+    clearRight()
+    local lbl = new("TextLabel", {
+        Parent = rightArea,
+        Text = "Informações:\nDev: Dev <thurxis>\nTema: Dark AMOLED\nExecutor: Delta (Android)",
+        TextColor3 = THEME.muted,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.SourceSans,
+        TextSize = 14,
+        Position = UDim2.new(0,12,0,12),
+        Size = UDim2.new(1,-24,1,-24),
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+    })
+end)
+
+-- Minimize / Close behavior -> substitui mainFrame por ícone arrastável
+local iconButton
+local function createIcon()
+    if iconButton and iconButton.Parent then return end
+    iconButton = new("TextButton", {
+        Parent = screenGui,
+        Text = "🏠",
+        TextSize = 26,
+        Font = Enum.Font.SourceSansBold,
+        Size = UDim2.new(0,48,0,48),
+        Position = UDim2.new(0,20,0,20),
+        BackgroundColor3 = THEME.panel,
+        TextColor3 = THEME.text,
+        AutoButtonColor = true,
+    })
+    new("UICorner", {Parent = iconButton, CornerRadius = UDim.new(0,12)})
+
+    -- arrastar
+    local dragging = false
+    local dragInput, dragStart, startPos
+    iconButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = iconButton.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    iconButton.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            iconButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    iconButton.MouseButton1Click:Connect(function()
+        if mainFrame.Parent then
+            mainFrame.Visible = true
+            iconButton:Destroy()
+            iconButton = nil
+        end
+    end)
+end
+
+btnMin.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    createIcon()
+end)
+btnClose.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    createIcon()
+end)
+
+-- Estilização final: tornar botões do menu com texto branco e cantos arredondados
+for _,v in ipairs(leftPanel:GetChildren()) do
+    if v:IsA("TextButton") then
+        v.TextColor3 = THEME.text
+        v.BackgroundColor3 = Color3.fromRGB(18,18,18)
+    end
+end
+
+-- Proteções: opcional, você pode conectar checks locais aqui
+-- Exemplo: impedir que o personagem sente (simulação)
+-- (MANTIDO OPCIONAL e LOCAL)
+
+print("infinix Client GUI carregado (simulado).")
+
+-- FIM DO SCRIPT
