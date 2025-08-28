@@ -1,201 +1,123 @@
---// Infinix Client | Brookhaven Rp
---// Dev: <thurxis>
+-- Cliente Infinix | Brookhaven Rp | Português
+-- Dev: <thurxis>
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
--- Criar GUI principal
-local ScreenGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
-ScreenGui.Name = "InfinixClient"
-
--- Botão flutuante 🏠
-local DragButton = Instance.new("TextButton")
-DragButton.Size = UDim2.new(0, 50, 0, 50)
-DragButton.Position = UDim2.new(0.05, 0, 0.2, 0)
-DragButton.Text = "🏠"
-DragButton.TextColor3 = Color3.fromRGB(255,255,255)
-DragButton.BackgroundColor3 = Color3.fromRGB(0,0,0)
-DragButton.BackgroundTransparency = 0.3
-DragButton.TextScaled = true
-DragButton.Parent = ScreenGui
-DragButton.Active = true
-DragButton.Draggable = true
-
--- Janela principal
+local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 600, 0, 400)
-MainFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-MainFrame.Visible = false
+local LeftFrame = Instance.new("Frame")
+local RightFrame = Instance.new("Frame")
+
+local UICorner = Instance.new("UICorner")
+
+-- Config ScreenGui
+ScreenGui.Parent = game:GetService("CoreGui")
+
+-- Main Frame
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+MainFrame.Active = true
+MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
 
--- Botões fechar e minimizar
-local CloseBtn = Instance.new("TextButton", MainFrame)
-CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
-CloseBtn.Text = "X"
-CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(20,20,20)
-CloseBtn.TextScaled = true
-CloseBtn.BackgroundTransparency = 0.2
+-- Left menu
+LeftFrame.Size = UDim2.new(0, 120, 1, 0)
+LeftFrame.Position = UDim2.new(0, 0, 0, 0)
+LeftFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+LeftFrame.Parent = MainFrame
 
-local MinBtn = Instance.new("TextButton", MainFrame)
-MinBtn.Size = UDim2.new(0, 30, 0, 30)
-MinBtn.Position = UDim2.new(1, -70, 0, 5)
-MinBtn.Text = "-"
-MinBtn.TextColor3 = Color3.fromRGB(255,255,255)
-MinBtn.BackgroundColor3 = Color3.fromRGB(20,20,20)
-MinBtn.TextScaled = true
-MinBtn.BackgroundTransparency = 0.2
+-- Right content
+RightFrame.Size = UDim2.new(1, -120, 1, 0)
+RightFrame.Position = UDim2.new(0, 120, 0, 0)
+RightFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+RightFrame.Parent = MainFrame
 
--- Menu lateral esquerdo
-local LeftFrame = Instance.new("Frame", MainFrame)
-LeftFrame.Size = UDim2.new(0, 150, 1, -10)
-LeftFrame.Position = UDim2.new(0, 5, 0, 5)
-LeftFrame.BackgroundColor3 = Color3.fromRGB(15,15,15)
-
--- Área direita (conteúdo)
-local RightFrame = Instance.new("Frame", MainFrame)
-RightFrame.Size = UDim2.new(1, -170, 1, -10)
-RightFrame.Position = UDim2.new(0, 160, 0, 5)
-RightFrame.BackgroundColor3 = Color3.fromRGB(10,10,10)
-
--- Função de criar botão
-local function CreateButton(name, parent, yPos)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, -10, 0, 40)
-    Btn.Position = UDim2.new(0, 5, 0, yPos)
-    Btn.Text = name
-    Btn.TextColor3 = Color3.fromRGB(255,255,255)
-    Btn.BackgroundColor3 = Color3.fromRGB(25,25,25)
-    Btn.Font = Enum.Font.GothamBold
-    Btn.TextSize = 14
-    Btn.AutoButtonColor = true
-    Btn.Parent = parent
-    Btn.BorderSizePixel = 0
-    Btn.BackgroundTransparency = 0.1
-    Btn.ClipsDescendants = true
-    Btn.TextWrapped = true
-    Btn.ZIndex = 2
-    Btn.UICorner = Instance.new("UICorner", Btn)
-    Btn.UICorner.CornerRadius = UDim.new(0,12)
-    return Btn
+-- Função p/ criar botão
+local function createButton(text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 40)
+    btn.Position = UDim2.new(0, 5, 0, (#LeftFrame:GetChildren()-1) * 45 + 5)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.Text = text
+    btn.Parent = LeftFrame
+    local corner = Instance.new("UICorner", btn)
+    corner.CornerRadius = UDim.new(0, 8)
+    btn.MouseButton1Click:Connect(callback)
+    return btn
 end
 
--- Criando botões do menu
-local InicioBtn = CreateButton("Início", LeftFrame, 10)
-local ProtecaoBtn = CreateButton("Proteção", LeftFrame, 60)
-local TrollBtn = CreateButton("Troll", LeftFrame, 110)
-
--- Criar abas (frames)
-local InicioFrame = Instance.new("Frame", RightFrame)
-InicioFrame.Size = UDim2.new(1,0,1,0)
-InicioFrame.BackgroundTransparency = 1
-
-local ProtecaoFrame = Instance.new("Frame", RightFrame)
-ProtecaoFrame.Size = UDim2.new(1,0,1,0)
-ProtecaoFrame.BackgroundTransparency = 1
-ProtecaoFrame.Visible = false
-
-local TrollFrame = Instance.new("Frame", RightFrame)
-TrollFrame.Size = UDim2.new(1,0,1,0)
-TrollFrame.BackgroundTransparency = 1
-TrollFrame.Visible = false
-
--- Conteúdo Início
-local InicioLabel = Instance.new("TextLabel", InicioFrame)
-InicioLabel.Size = UDim2.new(1,0,0,40)
-InicioLabel.Text = "Infinix Hub | Community"
-InicioLabel.TextColor3 = Color3.fromRGB(255,255,255)
-InicioLabel.BackgroundTransparency = 1
-InicioLabel.TextSize = 18
-
-local JoinBtn = Instance.new("TextButton", InicioFrame)
-JoinBtn.Size = UDim2.new(0,200,0,40)
-JoinBtn.Position = UDim2.new(0,10,0,50)
-JoinBtn.Text = "Join"
-JoinBtn.TextColor3 = Color3.fromRGB(255,255,255)
-JoinBtn.BackgroundColor3 = Color3.fromRGB(0,200,0)
-JoinBtn.UICorner = Instance.new("UICorner", JoinBtn)
-
-JoinBtn.MouseButton1Click:Connect(function()
-    setclipboard("https://discord.gg/XT8DFw2QsG")
-end)
-
--- Conteúdo Proteção
-local ant1 = CreateButton("ANT VOID", ProtecaoFrame, 10)
-local ant2 = CreateButton("ANT SIT", ProtecaoFrame, 60)
-local ant3 = CreateButton("ANT SCRIPT", ProtecaoFrame, 110)
-
--- (Aqui você conecta os sistemas reais das proteções ANT)
-
--- Conteúdo Troll
-local TrollLabel = Instance.new("TextLabel", TrollFrame)
-TrollLabel.Size = UDim2.new(1,0,0,30)
-TrollLabel.Text = "TROLL"
-TrollLabel.TextColor3 = Color3.fromRGB(255,255,255)
-TrollLabel.BackgroundTransparency = 1
-
-local BugarServerBtn = CreateButton("BUGAR PULAR SERVIDOR (Todos players)", TrollFrame, 40)
-local BugarPlayerBtn = CreateButton("BUGAR JOGADOR SELECIONADO", TrollFrame, 90)
-
-local PlayerList = Instance.new("ScrollingFrame", TrollFrame)
-PlayerList.Size = UDim2.new(0,200,0,150)
-PlayerList.Position = UDim2.new(0,10,0,140)
-PlayerList.BackgroundColor3 = Color3.fromRGB(20,20,20)
-PlayerList.CanvasSize = UDim2.new(0,0,0,0)
-
-local AtualizarBtn = CreateButton("ATUALIZAR PLAYERS", TrollFrame, 300)
-
--- Função de atualizar lista de jogadores
-local function UpdatePlayers()
-    for _,child in pairs(PlayerList:GetChildren()) do
-        if child:IsA("TextButton") then child:Destroy() end
-    end
-    local y = 0
-    for _,plr in pairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer then
-            local Btn = CreateButton(plr.Name, PlayerList, y)
-            y = y + 40
-            Btn.MouseButton1Click:Connect(function()
-                -- aqui vai lógica de bugar só esse jogador
-                warn("Bugando "..plr.Name)
-            end)
+-- Função para limpar RightFrame
+local function clearRight()
+    for _, v in pairs(RightFrame:GetChildren()) do
+        if v:IsA("GuiObject") then
+            v:Destroy()
         end
     end
-    PlayerList.CanvasSize = UDim2.new(0,0,0,y)
 end
-AtualizarBtn.MouseButton1Click:Connect(UpdatePlayers)
 
--- Troca de abas
-InicioBtn.MouseButton1Click:Connect(function()
-    InicioFrame.Visible = true
-    ProtecaoFrame.Visible = false
-    TrollFrame.Visible = false
+-- Início
+createButton("Início", function()
+    clearRight()
+    local title = Instance.new("TextLabel")
+    title.Text = "infinix Hub | Community"
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 18
+    title.Parent = RightFrame
+
+    local desc = Instance.new("TextLabel")
+    desc.Text = "Junte-se a nossa comunidade discord para comprar um designer"
+    desc.Size = UDim2.new(1, -20, 0, 60)
+    desc.Position = UDim2.new(0, 10, 0, 50)
+    desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+    desc.Font = Enum.Font.Gotham
+    desc.TextWrapped = true
+    desc.TextSize = 14
+    desc.Parent = RightFrame
+
+    local joinBtn = Instance.new("TextButton")
+    joinBtn.Text = "Join"
+    joinBtn.Size = UDim2.new(0, 100, 0, 40)
+    joinBtn.Position = UDim2.new(0, 10, 0, 120)
+    joinBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+    joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    joinBtn.Font = Enum.Font.GothamBold
+    joinBtn.TextSize = 14
+    joinBtn.Parent = RightFrame
+    Instance.new("UICorner", joinBtn).CornerRadius = UDim.new(0, 8)
+
+    joinBtn.MouseButton1Click:Connect(function()
+        setclipboard("https://discord.gg/XT8DFw2QsG")
+    end)
 end)
 
-ProtecaoBtn.MouseButton1Click:Connect(function()
-    InicioFrame.Visible = false
-    ProtecaoFrame.Visible = true
-    TrollFrame.Visible = false
+-- Proteção
+createButton("Proteção", function()
+    clearRight()
+    local prot = Instance.new("TextLabel")
+    prot.Text = "Funções de Proteção:\n- ANT VOID\n- ANT SIT\n- ANT SCRIPT"
+    prot.Size = UDim2.new(1, -20, 1, -20)
+    prot.Position = UDim2.new(0, 10, 0, 10)
+    prot.TextColor3 = Color3.fromRGB(255, 255, 255)
+    prot.Font = Enum.Font.Gotham
+    prot.TextWrapped = true
+    prot.TextSize = 14
+    prot.Parent = RightFrame
 end)
 
-TrollBtn.MouseButton1Click:Connect(function()
-    InicioFrame.Visible = false
-    ProtecaoFrame.Visible = false
-    TrollFrame.Visible = true
-    UpdatePlayers()
-end)
-
--- Mostrar menu
-DragButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
-end)
-
-CloseBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-end)
-
-MinBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
+-- Troll
+createButton("Troll", function()
+    clearRight()
+    local troll = Instance.new("TextLabel")
+    troll.Text = "TROLL"
+    troll.Size = UDim2.new(1, 0, 0, 30)
+    troll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    troll.Font = Enum.Font.GothamBold
+    troll.TextSize = 18
+    troll.Parent = RightFrame
 end)
