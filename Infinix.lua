@@ -1,140 +1,104 @@
--- Infinix HUB estilo da print
+-- GUI estilo Drip Solutions (modelo preto)
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 
-local Player = game.Players.LocalPlayer
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MenuUI"
-ScreenGui.Parent = Player:WaitForChild("PlayerGui")
-
--- Label canto superior esquerdo
-local TopLabel = Instance.new("TextLabel")
-TopLabel.Size = UDim2.new(0, 450, 0, 30)
-TopLabel.Position = UDim2.new(0, 5, 0, 5)
-TopLabel.BackgroundTransparency = 1
-TopLabel.Text = "Infinix HUB by || ThurXtech kkkj || Brookhaven RP 🏠"
-TopLabel.TextColor3 = Color3.fromRGB(255,255,255)
-TopLabel.TextScaled = true
-TopLabel.TextXAlignment = Enum.TextXAlignment.Left
-TopLabel.Parent = ScreenGui
-
--- Frame principal
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 300)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+-- Menu principal (lado esquerdo)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 160, 0, 320)
+MainFrame.Position = UDim2.new(0, 20, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15,15,15)
 MainFrame.BorderSizePixel = 0
-MainFrame.Parent = ScreenGui
 
--- Barra lateral
-local SideBar = Instance.new("Frame")
-SideBar.Size = UDim2.new(0, 120, 1, 0)
-SideBar.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
-SideBar.BorderSizePixel = 0
-SideBar.Parent = MainFrame
+-- Título
+local Titulo = Instance.new("TextLabel", MainFrame)
+Titulo.Size = UDim2.new(1,0,0,40)
+Titulo.Text = "Infinix HUB"
+Titulo.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Titulo.TextColor3 = Color3.fromRGB(255,255,255)
+Titulo.Font = Enum.Font.GothamBold
+Titulo.TextSize = 18
 
--- Área conteúdo
-local Content = Instance.new("Frame")
-Content.Size = UDim2.new(1, -120, 1, 0)
-Content.Position = UDim2.new(0, 120, 0, 0)
-Content.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
-Content.BorderSizePixel = 0
-Content.Parent = MainFrame
+-- Frame lateral (abre quando clicar)
+local SideFrame = Instance.new("Frame", ScreenGui)
+SideFrame.Size = UDim2.new(0, 260, 0, 320)
+SideFrame.Position = UDim2.new(0, 200, 0.5, -160)
+SideFrame.BackgroundColor3 = Color3.fromRGB(10,10,10)
+SideFrame.BorderSizePixel = 0
+SideFrame.Visible = false
 
--- Botão Fechar (X)
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-CloseBtn.Position = UDim2.new(1, -35, 0, 5)
-CloseBtn.Text = "X"
-CloseBtn.BackgroundColor3 = Color3.fromRGB(80,80,80)
-CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
-CloseBtn.Parent = MainFrame
-
--- Botão Minimizar (-)
-local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 30, 0, 30)
-MinBtn.Position = UDim2.new(1, -70, 0, 5)
-MinBtn.Text = "-"
-MinBtn.BackgroundColor3 = Color3.fromRGB(80,80,80)
-MinBtn.TextColor3 = Color3.fromRGB(255,255,255)
-MinBtn.Parent = MainFrame
-
--- Botão círculo ☠️ (reabre menu)
-local CircleBtn = Instance.new("TextButton")
-CircleBtn.Size = UDim2.new(0, 50, 0, 50)
-CircleBtn.Position = UDim2.new(0.5, -25, 0.5, -25)
-CircleBtn.Text = "☠️"
-CircleBtn.BackgroundColor3 = Color3.fromRGB(200,0,0)
-CircleBtn.TextColor3 = Color3.fromRGB(255,255,255)
-CircleBtn.Visible = false
-CircleBtn.Parent = ScreenGui
-CircleBtn.TextScaled = true
-CircleBtn.BorderSizePixel = 0
-
--- Minimizar
-local minimized = false
-MinBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    if minimized then
-        Content.Visible = false
-        SideBar.Visible = false
-    else
-        Content.Visible = true
-        SideBar.Visible = true
-    end
-end)
-
--- Fechar
-CloseBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-    CircleBtn.Visible = true
-end)
-
--- Reabrir
-CircleBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
-    CircleBtn.Visible = false
-end)
-
--- Sistema de páginas
-local Pages = {}
-local function CreatePage(name, text)
-    local Page = Instance.new("Frame")
-    Page.Name = name
-    Page.Size = UDim2.new(1,0,1,0)
-    Page.BackgroundTransparency = 1
-    Page.Visible = false
-    Page.Parent = Content
-
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(1,0,1,0)
-    Label.BackgroundTransparency = 1
-    Label.Text = text
-    Label.TextColor3 = Color3.fromRGB(255,255,255)
-    Label.TextScaled = true
-    Label.Parent = Page
-
-    Pages[name] = Page
+-- Função criar botão lateral
+local function criarBotao(nome, ordem, func)
+    local Btn = Instance.new("TextButton", MainFrame)
+    Btn.Size = UDim2.new(1,0,0,35)
+    Btn.Position = UDim2.new(0,0,0,(ordem*40))
+    Btn.Text = nome
+    Btn.TextColor3 = Color3.fromRGB(255,255,255)
+    Btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    Btn.Font = Enum.Font.Gotham
+    Btn.TextSize = 16
+    Btn.BorderSizePixel = 0
+    Btn.MouseButton1Click:Connect(func)
 end
 
-local function CreateButton(name,text)
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1,0,0,40)
-    Button.BackgroundColor3 = Color3.fromRGB(180,0,0)
-    Button.Text = text
-    Button.TextColor3 = Color3.fromRGB(255,255,255)
-    Button.Parent = SideBar
-
-    Button.MouseButton1Click:Connect(function()
-        for _,p in pairs(Pages) do p.Visible=false end
-        if Pages[name] then Pages[name].Visible=true end
+-- Função criar toggle no painel lateral
+local function criarToggle(nome, ordem)
+    local Toggle = Instance.new("TextButton", SideFrame)
+    Toggle.Size = UDim2.new(1,-20,0,30)
+    Toggle.Position = UDim2.new(0,10,0,(ordem*35)+10)
+    Toggle.Text = nome.." [OFF]"
+    Toggle.TextColor3 = Color3.fromRGB(255,255,255)
+    Toggle.BackgroundColor3 = Color3.fromRGB(40,0,60)
+    Toggle.Font = Enum.Font.Gotham
+    Toggle.TextSize = 15
+    Toggle.BorderSizePixel = 0
+    local ativo = false
+    Toggle.MouseButton1Click:Connect(function()
+        ativo = not ativo
+        Toggle.Text = nome.." ["..(ativo and "ON" or "OFF").."]"
     end)
 end
 
--- Páginas exemplo
-CreatePage("info","Página de Informações")
-CreatePage("protecao","Página de Proteção")
-CreatePage("trolar","Página de Trolar")
+-- Botão Proteção (abre painel lateral)
+criarBotao("Proteção",1,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Anti Tool","Anti Car","Anti Script","Anti Bug","Anti ChatSpy"}
+    for i,n in ipairs(opcoes) do
+        criarToggle(n,i)
+    end
+end)
 
--- Botões exemplo
-CreateButton("info","Informações")
-CreateButton("protecao","Proteção")
-CreateButton("trolar","Trolar")
+-- Adiciona mais botões principais iguais o print
+criarBotao("Spam/Client",2,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Spam 1","Spam 2","Spam 3"}
+    for i,n in ipairs(opcoes) do criarToggle(n,i) end
+end)
+
+criarBotao("Personagem",3,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Speed","Fly","Noclip"}
+    for i,n in ipairs(opcoes) do criarToggle(n,i) end
+end)
+
+criarBotao("Trolar",4,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Explodir","Teleportar Players","Crash Local"}
+    for i,n in ipairs(opcoes) do criarToggle(n,i) end
+end)
+
+criarBotao("Audio/Música",5,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Tocar Música","Parar Música"}
+    for i,n in ipairs(opcoes) do criarToggle(n,i) end
+end)
+
+criarBotao("Roupas",6,function()
+    SideFrame.Visible = true
+    for _,v in pairs(SideFrame:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local opcoes = {"Roupa 1","Roupa 2","Roupa 3"}
+    for i,n in ipairs(opcoes) do criarToggle(n,i) end
+end)
